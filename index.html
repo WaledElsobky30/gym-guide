@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>دليلك الشخصي في الجيم — برنامج 6 أيام</title>
+
+  <!-- خط Cairo العربي لوضوح القراءة على الموبايل -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Cairo', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* إخفاء شريط التمرير الأفقي في شريط الأيام مع الحفاظ على السلاسة */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    body {
+      font-family: 'Cairo', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen pb-32 selection:bg-emerald-500/30 selection:text-emerald-200">
+
+  <!-- الرأس الرئيسي للتطبيق -->
+  <header class="sticky top-0 z-30 bg-slate-950/90 backdrop-blur-md border-b border-slate-800/80">
+    <div class="max-w-2xl mx-auto px-4 py-3.5 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <!-- شعار التطبيق -->
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/20 shrink-0">
+          <svg class="w-6 h-6 text-slate-950" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6.5 6.5h11M6.5 17.5h11M4 10v4M20 10v4M7 7v10M17 7v10M2 11v2M22 11v2"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-lg sm:text-xl font-extrabold text-white leading-tight">دليلك الشخصي في الجيم</h1>
+          <p class="text-xs sm:text-sm text-emerald-400 font-semibold">برنامج آمن ومرتب — 6 أيام في الأسبوع</p>
+        </div>
+      </div>
+
+      <!-- زر القواعد الذهبية -->
+      <button
+        id="openRulesBtn"
+        type="button"
+        class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-700 text-xs sm:text-sm font-bold text-amber-300 transition shrink-0"
+      >
+        <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 16v-4"/>
+          <path d="M12 8h.01"/>
+        </svg>
+        <span>قواعد مهمة</span>
+      </button>
+    </div>
+
+    <!-- شريط اختيار أيام الأسبوع -->
+    <div class="max-w-2xl mx-auto px-4 pb-3">
+      <div id="daySelector" class="flex gap-2 overflow-x-auto no-scrollbar py-1" role="tablist" aria-label="أيام الأسبوع">
+        <!-- يتم توليد الأيام ديناميكياً عبر JavaScript -->
+      </div>
+    </div>
+  </header>
+
+  <!-- المحتوى الرئيسي -->
+  <main class="max-w-2xl mx-auto px-4 pt-5 space-y-5">
+
+    <!-- بطاقة ملخص اليوم وشريط التقدم -->
+    <section class="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 sm:p-5 shadow-xl">
+      <div class="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span id="dayBadge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+              السبت
+            </span>
+            <span id="dayDuration" class="text-xs text-slate-400 font-semibold">حوالي 60 دقيقة</span>
+          </div>
+          <h2 id="dayTitle" class="text-xl sm:text-2xl font-extrabold text-white">يوم الدفع (صدر + كتف + تراي)</h2>
+          <p id="daySubtitle" class="text-sm text-slate-400 mt-0.5">تمارين أجهزة آمنة بدون تحميل على أسفل الظهر</p>
+        </div>
+
+        <!-- زر تصفير تمرينة اليوم -->
+        <button
+          id="resetDayBtn"
+          type="button"
+          class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800/90 hover:bg-rose-500/15 hover:text-rose-300 hover:border-rose-500/40 border border-slate-700 text-xs font-bold text-slate-300 transition active:scale-95"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+            <path d="M3 3v5h5"/>
+          </svg>
+          <span>تصفير تمرينة النهاردة</span>
+        </button>
+      </div>
+
+      <!-- شريط التقدم -->
+      <div class="mt-4">
+        <div class="flex items-center justify-between text-xs font-bold mb-1.5">
+          <span class="text-slate-300">نسبة إنجاز اليوم</span>
+          <span id="progressText" class="text-emerald-400">0%</span>
+        </div>
+        <div class="w-full h-3 bg-slate-800 rounded-full overflow-hidden p-0.5">
+          <div id="progressBar" class="h-full bg-gradient-to-l from-emerald-400 to-teal-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <p id="completionMessage" class="hidden mt-2.5 text-xs sm:text-sm font-bold text-emerald-300 bg-emerald-500/10 border border-emerald-500/25 rounded-xl px-3 py-2 text-center">
+          عاش يا بطل! خلصت تمرينة النهاردة بالكامل — اشرب مياه كويس وارتاح عشان شغل بكرة.
+        </p>
+      </div>
+    </section>
+
+    <!-- تبويبات المراحل الـ 3 (تختفي يوم الجمعة) -->
+    <nav id="stageTabsWrapper" class="grid grid-cols-3 gap-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800" aria-label="مراحل التمرين">
+      <button
+        type="button"
+        data-stage="warmup"
+        class="stage-tab flex flex-col items-center justify-center py-2.5 px-2 rounded-xl text-xs sm:text-sm font-bold transition"
+      >
+        <span class="flex items-center gap-1">
+          <span>1. التسخين</span>
+          <span id="tabCheckWarmup" class="hidden text-emerald-400">✓</span>
+        </span>
+        <span class="text-[11px] font-semibold opacity-75 mt-0.5">10 دقائق</span>
+      </button>
+
+      <button
+        type="button"
+        data-stage="workout"
+        class="stage-tab flex flex-col items-center justify-center py-2.5 px-2 rounded-xl text-xs sm:text-sm font-bold transition"
+      >
+        <span class="flex items-center gap-1">
+          <span>2. الأجهزة</span>
+          <span id="tabCheckWorkout" class="hidden text-emerald-400">✓</span>
+        </span>
+        <span class="text-[11px] font-semibold opacity-75 mt-0.5">35-40 دقيقة</span>
+      </button>
+
+      <button
+        type="button"
+        data-stage="stretches"
+        class="stage-tab flex flex-col items-center justify-center py-2.5 px-2 rounded-xl text-xs sm:text-sm font-bold transition"
+      >
+        <span class="flex items-center gap-1">
+          <span>3. الإطالات</span>
+          <span id="tabCheckStretches" class="hidden text-emerald-400">✓</span>
+        </span>
+        <span class="text-[11px] font-semibold opacity-75 mt-0.5">10-15 دقيقة</span>
+      </button>
+    </nav>
+
+    <!-- حاوية عرض المحتوى النشط -->
+    <div id="contentArea" class="space-y-4">
+      <!-- يتم توليد المحتوى هنا ديناميكياً -->
+    </div>
+
+  </main>
+
+  <!-- المؤقت العائم للراحة والإطالات -->
+  <div
+    id="floatingTimer"
+    class="fixed bottom-3 left-3 right-3 max-w-2xl mx-auto z-40 hidden"
+    role="region"
+    aria-label="مؤقت الراحة"
+  >
+    <div id="timerCard" class="bg-slate-900/95 backdrop-blur-lg border-2 border-emerald-500/60 rounded-3xl p-4 shadow-2xl shadow-black/60">
+      <div class="flex items-center justify-between gap-3">
+        <div class="min-w-0">
+          <p id="timerLabel" class="text-xs font-bold text-emerald-400 truncate">مؤقت الراحة</p>
+          <div class="flex items-baseline gap-2">
+            <span id="timerDisplay" class="text-3xl sm:text-4xl font-black tracking-wider text-white tabular-nums">01:30</span>
+            <span id="timerStatusText" class="text-xs font-semibold text-slate-400">جاري العد...</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <button
+            id="timerPauseBtn"
+            type="button"
+            class="px-3.5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs sm:text-sm transition active:scale-95"
+          >
+            إيقاف مؤقت
+          </button>
+          <button
+            id="timerAddBtn"
+            type="button"
+            class="px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs sm:text-sm border border-slate-700 transition active:scale-95"
+            title="زيادة 15 ثانية"
+          >
+            +15ث
+          </button>
+          <button
+            id="timerCloseBtn"
+            type="button"
+            class="p-2.5 rounded-xl bg-slate-800 hover:bg-rose-500/20 hover:text-rose-300 text-slate-400 border border-slate-700 transition active:scale-95"
+            aria-label="إغلاق المؤقت"
+          >
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 6 6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- شريط تقدم المؤقت -->
+      <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden mt-3">
+        <div id="timerProgressBar" class="h-full bg-emerald-400 rounded-full transition-all duration-500" style="width: 100%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة القواعد الذهبية -->
+  <div
+    id="rulesModal"
+    class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/75 backdrop-blur-sm"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="rulesModalTitle"
+  >
+    <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-lg w-full max-h-[88vh] overflow-y-auto p-5 sm:p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between gap-3 border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-amber-500/15 text-amber-400 flex items-center justify-center">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          </div>
+          <h3 id="rulesModalTitle" class="text-lg sm:text-xl font-extrabold text-white">قواعد مهمة قبل ما تبدأ</h3>
+        </div>
+        <button
+          id="closeRulesBtn"
+          type="button"
+          class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
+          aria-label="إغلاق"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 6 6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <!-- القاعدة 1 -->
+        <div class="bg-slate-800/70 border border-slate-700/80 rounded-2xl p-4">
+          <h4 class="font-extrabold text-emerald-400 text-base mb-1">1. قاعدة العدتين الاحتياطي (مهمة جداً)</h4>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            اختار وزن يخليك تخلص العدة الـ 12 وأنت حاسس إنك لسه تقدر تجيب عدتين كمان بالعافية. <strong class="text-white">بلاش توصل للانهيار التام (الفشل العضلي)</strong> عشان جسمك يقدر يستشفي كويس ويروح شغل الغيط تاني يوم وهو فايق.
+          </p>
+        </div>
+
+        <!-- القاعدة 2 -->
+        <div class="bg-slate-800/70 border border-slate-700/80 rounded-2xl p-4">
+          <h4 class="font-extrabold text-emerald-400 text-base mb-1">2. التدرج في الأوزان بعد أول أسبوعين</h4>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            أول أسبوعين الهدف إنك تحفظ حركة الأجهزة وتظبط قعدتك ونفسك صح. بعد كده، كل ما تلاقي الوزن بقى سهل في الـ 12 عدة، زود أقل بلاطة وزن متاحة على الجهاز بهدوء.
+          </p>
+        </div>
+
+        <!-- القاعدة 3 -->
+        <div class="bg-slate-800/70 border border-slate-700/80 rounded-2xl p-4">
+          <h4 class="font-extrabold text-emerald-400 text-base mb-1">3. المياه والأكل والنوم</h4>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            مع مجهود الشغل والجيم، جسمك محتاج:
+            <br>• شرب <strong class="text-white">3 إلى 4 لتر مياه</strong> في اليوم (خصوصاً مع العرق).
+            <br>• نوم من <strong class="text-white">7 إلى 8 ساعات</strong> بالليل عشان العضلات تتبني.
+            <br>• اهتم بالبروتين في أكلك: بيض، جبنة قريش، فول، عدس، فراخ، سمك، لحمة.
+          </p>
+        </div>
+      </div>
+
+      <button
+        id="confirmRulesBtn"
+        type="button"
+        class="w-full py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-base transition active:scale-[0.99]"
+      >
+        فهمت، يلا نتمرن!
+      </button>
+    </div>
+  </div>
+
+  <!-- نافذة تأكيد تصفير اليوم (بديل آمن عن confirm) -->
+  <div
+    id="resetConfirmModal"
+    class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/75 backdrop-blur-sm"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="resetConfirmTitle"
+  >
+    <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-sm w-full p-5 shadow-2xl space-y-4 text-center">
+      <div class="w-12 h-12 mx-auto rounded-2xl bg-rose-500/15 text-rose-400 flex items-center justify-center">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+          <path d="M3 3v5h5"/>
+        </svg>
+      </div>
+      <div>
+        <h3 id="resetConfirmTitle" class="text-lg font-extrabold text-white">تصفير تمرينة اليوم؟</h3>
+        <p class="text-sm text-slate-400 mt-1">هيتم مسح كل العلامات والمجموعات اللي خلصتها في اليوم ده عشان تبدأه من الأول.</p>
+      </div>
+      <div class="grid grid-cols-2 gap-2.5 pt-1">
+        <button
+          id="cancelResetBtn"
+          type="button"
+          class="py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm transition"
+        >
+          إلغاء
+        </button>
+        <button
+          id="confirmResetBtn"
+          type="button"
+          class="py-2.5 rounded-xl bg-rose-500 hover:bg-rose-400 text-white font-extrabold text-sm transition"
+        >
+          أيوة، صفّر اليوم
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================================
+       بيانات البرنامج التدريبي (أيام الأسبوع، التسخين، الأجهزة، الإطالات، الجمعة)
+       ========================================================================= */
+
+    const DAYS = [
+      { id: 'sat', name: 'السبت', shortType: 'دفع', type: 'push', title: 'يوم الدفع (صدر + كتف + تراي)', subtitle: 'تمارين أجهزة آمنة بدون تحميل على أسفل الظهر', duration: 'حوالي 60 دقيقة' },
+      { id: 'sun', name: 'الأحد', shortType: 'سحب', type: 'pull', title: 'يوم السحب (ظهر + باي)', subtitle: 'فك ضغط الفقرات وتقوية الظهر العلوي والذراعين', duration: 'حوالي 60 دقيقة' },
+      { id: 'mon', name: 'الاثنين', shortType: 'رجل وبطن', type: 'legs', title: 'يوم الرجل والبطن', subtitle: 'بناء رجل قوية وحماية مفصل الركبة والقطنية', duration: 'حوالي 60 دقيقة' },
+      { id: 'tue', name: 'الثلاثاء', shortType: 'دفع', type: 'push', title: 'يوم الدفع (صدر + كتف + تراي)', subtitle: 'الجولة الثانية في الأسبوع بأداء هادي ومنظم', duration: 'حوالي 60 دقيقة' },
+      { id: 'wed', name: 'الأربعاء', shortType: 'سحب', type: 'pull', title: 'يوم السحب (ظهر + باي)', subtitle: 'تقوية الظهر والقبضة عشان الشيل والشغل اليومي', duration: 'حوالي 60 دقيقة' },
+      { id: 'thu', name: 'الخميس', shortType: 'رجل وبطن', type: 'legs', title: 'يوم الرجل والبطن', subtitle: 'ختام أسبوع التمرين بقوة وتوازن', duration: 'حوالي 60 دقيقة' },
+      { id: 'fri', name: 'الجمعة', shortType: 'راحة', type: 'rest', title: 'يوم الراحة والاستشفاء', subtitle: 'العضلات بتتبني وقت الراحة — اهتم بالمياه والأكل والنوم', duration: 'استشفاء كامل' },
+    ];
+
+    // المرحلة 1: التسخين الثابت قبل أي تمرينة
+    const WARMUP_ITEMS = [
+      {
+        id: 'w1',
+        title: 'مشي سريع على المشاية أو عجلة',
+        reps: '5 دقائق',
+        desc: 'ابدأ بمشي سريع مريح أو بدّل على العجلة عشان تسخّن جسمك وتنشّط الدورة الدموية قبل الحديد.',
+        timerSec: 300,
+        icon: 'walk'
+      },
+      {
+        id: 'w2',
+        title: 'لف الكتف للأمام وللخلف',
+        reps: '15 مرة لكل اتجاه',
+        desc: 'اقف مستقيم وافرد ضهرك، لف كتفك دوائر واسعة وبطيئة لقدام 15 مرة وبعدين لورا 15 مرة.',
+        timerSec: null,
+        icon: 'shoulder'
+      },
+      {
+        id: 'w3',
+        title: 'لف الحوض والدوران الخفيف',
+        reps: '12 مرة',
+        desc: 'حط إيدك في وسطك ولف حوضك دوائر هادية يمين وشمال عشان تفك أسفل الظهر وتجهز الحوض.',
+        timerSec: null,
+        icon: 'hip'
+      },
+      {
+        id: 'w4',
+        title: 'ثني وفرد الركبة برفق',
+        reps: '15 مرة',
+        desc: 'ضم رجلك سنة وحط إيدك فوق ركبتك، اتنيها سنة بسيطة وافردها بهدوء لتليين مفصل الركبة.',
+        timerSec: null,
+        icon: 'knee'
+      },
+      {
+        id: 'w5',
+        title: 'لف الرسغ والكوع',
+        reps: '15 مرة',
+        desc: 'لف إيدك من عند الرست (المعصم) والكوع في دوائر خفيفة عشان تجهز مفاصل الإيد لمسكة الأجهزة.',
+        timerSec: null,
+        icon: 'wrist'
+      }
+    ];
+
+    // المرحلة 2: التمارين الأساسية حسب نوع اليوم
+    const WORKOUTS = {
+      push: [
+        {
+          id: 'push_1',
+          name: 'دفع الصدر على الجهاز',
+          enName: 'Chest Press Machine',
+          sets: 4,
+          reps: '10 - 12 عدة',
+          restSec: 90,
+          form: 'اظبط الكرسي بحيث المقابض تكون في مستوى نص الصدر، ثبت ضهرك وكتفك كويس على المسند، ادفع لقدام لحد ما دراعك يتفرد تقريباً، وارجع ببطء وتحكم.',
+          tip: 'أمان كامل للصدر والكتف الأمامي من غير ما تحتاج حد يأمنك زي البار الحر.',
+          youtubeQuery: 'Chest Press Machine شرح تمرين',
+          icon: 'chest'
+        },
+        {
+          id: 'push_2',
+          name: 'دفع الكتف على الجهاز',
+          enName: 'Shoulder Press Machine',
+          sets: 3,
+          reps: '10 - 12 عدة',
+          restSec: 90,
+          form: 'اقعد وضهرك مسنود بالكامل، امسك المقابض وادفع لفوق بسلاسة من غير ما تقفل كوعك على الآخر، وانزل بالراحة لحد مستوى ودنك تقريباً.',
+          tip: 'بيقوي الكتف بوضعية مسنودة وبيحميه مع الشيل والرفع في الشغل.',
+          youtubeQuery: 'Shoulder Press Machine شرح تمرين',
+          icon: 'shoulderPress'
+        },
+        {
+          id: 'push_3',
+          name: 'سحب ترايسبس بالكيبل',
+          enName: 'Cable Triceps Pushdown',
+          sets: 3,
+          reps: '12 - 15 عدة',
+          restSec: 60,
+          form: 'اقف قصاد جهاز الكيبل بمسطرة أو حبل، ثبت كوعك جنب جسمك ومتحركش كتفك، وافرد دراعك لتحت للآخر مع عصر العضلة، ثم ارجع ببطء.',
+          tip: 'ركز إن الحركة تكون من مفصل الكوع بس من غير ما تميل بضهرك لقدام.',
+          youtubeQuery: 'Cable Triceps Pushdown شرح تمرين',
+          icon: 'triceps'
+        }
+      ],
+      pull: [
+        {
+          id: 'pull_1',
+          name: 'سحب عالي للظهر',
+          enName: 'Lat Pulldown',
+          sets: 4,
+          reps: '10 - 12 عدة',
+          restSec: 90,
+          form: 'اقعد وثبت رجلك تحت المسند، امسك المسطرة أوسع شوية من عرض كتفك، اسحب ناحية أعلى صدرك مع ميل خفيف للخلف وضم لوحين الكتف، وارجع ببطء.',
+          tip: 'ممتاز جداً لفك ضغط الفقرات وتقوية الظهر العلوي بعد ساعات الشغل والوطي.',
+          youtubeQuery: 'Lat Pulldown شرح تمرين سحب عالي',
+          icon: 'pulldown'
+        },
+        {
+          id: 'pull_2',
+          name: 'سحب أرضي بالكيبل',
+          enName: 'Seated Cable Row',
+          sets: 4,
+          reps: '10 - 12 عدة',
+          restSec: 90,
+          form: 'اقعد وفرد ضهرك مستقيم تماماً، اسحب المقبض ناحية بطنك واضغط لوحين كتفك على بعض في آخر الحركة، وسيب الوزن يرجع ببطء من غير ما تتني ضهرك لقدام.',
+          tip: 'حافظ على استقامة أسفل الظهر طول التمرين ومتخليش الوزن يشد ضهرك لقدام.',
+          youtubeQuery: 'Seated Cable Row شرح تمرين سحب ارضي',
+          icon: 'row'
+        },
+        {
+          id: 'pull_3',
+          name: 'بايسبس بالدمبل',
+          enName: 'Dumbbell Biceps Curl',
+          sets: 3,
+          reps: '10 - 12 عدة',
+          restSec: 60,
+          form: 'اقف مستقيم وامسك دمبل في كل إيد، ثبت كوعك جنب جسمك وارفع الدمبل ناحية كتفك بالتبادل أو مع بعض من غير ما تمرجح ضهرك، وانزل ببطء.',
+          tip: 'اختار وزن تقدر تتحكم فيه كويس من غير مرجحة بالجسم.',
+          youtubeQuery: 'Dumbbell Biceps Curl شرح تمرين بايسبس',
+          icon: 'biceps'
+        }
+      ],
+      legs: [
+        {
+          id: 'legs_1',
+          name: 'دفع الرجل على الجهاز (ليج بريس)',
+          enName: 'Leg Press Machine',
+          sets: 4,
+          reps: '10 - 12 عدة',
+          restSec: 120,
+          form: 'اقعد وضهرك ومؤخرتك لازقين في الكرسي تماماً، حط رجلك في نص البلاتفورم بوسع كتفك، انزل بالوزن ببطء لزاوية 90 درجة وادفع لفوق من غير ما تفرد الركبة على الآخر.',
+          tip: 'بديل آمن جداً عن السكوات بالبار وبيحمي أسفل الظهر من أي تحميل.',
+          youtubeQuery: 'Leg Press Machine شرح تمرين دفع الرجل',
+          icon: 'legPress'
+        },
+        {
+          id: 'legs_2',
+          name: 'جهاز خلفيات الرجل',
+          enName: 'Leg Curl Machine',
+          sets: 3,
+          reps: '12 - 15 عدة',
+          restSec: 90,
+          form: 'اظبط الجهاز على طول رجلك، اسحب المسند ناحية جسمك ببطء وتركيز لحد ما تحس بشد واضح في العضلة الخلفية للفخذ، وارجع بالراحة.',
+          tip: 'تقوية الخلفيات بتعمل توازن مع الأماميات وبتحمي مفصل الركبة وأسفل الظهر.',
+          youtubeQuery: 'Seated Leg Curl Machine شرح تمرين خلفيات',
+          icon: 'legCurl'
+        },
+        {
+          id: 'legs_3',
+          name: 'تمرين البلانك للبطن',
+          enName: 'Plank',
+          sets: 3,
+          reps: '30 - 45 ثانية',
+          restSec: 60,
+          form: 'اسند على كوعك ومشط رجلك وخلي جسمك كله خط مستقيم من راسك لكعبك، اشفط بطنك وشدها كويس وتنفس بهدوء طول مدة الثبات.',
+          tip: 'لو حسيت بشد في أسفل الظهر، ارفع وسطك سنة بسيطة أو ريّح.',
+          youtubeQuery: 'Plank exercise شرح تمرين البلانك',
+          icon: 'plank'
+        }
+      ]
+    };
+
+    // المرحلة 3: التهدئة والإطالات بعد التمرين
+    const STRETCH_ITEMS = [
+      {
+        id: 's0',
+        title: 'مشي هادي لتهدئة ضربات القلب',
+        durationText: '5 دقائق',
+        desc: 'امشي على المشاية بسرعة بطيئة وهادية وخد نفس عميق عشان جسمك يهدى وعضلاتك تبدأ تفك.',
+        timerSec: 300,
+        timerLabel: 'تهدئة — مشي هادي'
+      },
+      {
+        id: 's1',
+        title: 'إطالة أسفل الظهر (وضعية الطفل)',
+        durationText: '30 ثانية × مرتين',
+        desc: 'اقعد على ركبتك على المرتبة، افرد إيدك لقدام على الأرض وانزل بصدرك بهدوء لحد ما تحس بشد مريح وفك لأسفل الظهر.',
+        timerSec: 30,
+        timerLabel: 'إطالة أسفل الظهر'
+      },
+      {
+        id: 's2',
+        title: 'إطالة الصدر والكتف على الحائط',
+        durationText: '30 ثانية لكل ناحية',
+        desc: 'حط كف إيدك وساعدك على حيطة أو عمود جهاز، ولف جسمك للناحية التانية بهدوء لحد ما تحس بشد خفيف في الصدر والكتف.',
+        timerSec: 30,
+        timerLabel: 'إطالة الصدر والكتف'
+      },
+      {
+        id: 's3',
+        title: 'إطالة العضلة الخلفية للفخذ',
+        durationText: '30 ثانية لكل رجل',
+        desc: 'اقعد على الأرض أو طرف البنش، افرد رجل واحدة لقدام واميل بجسمك لقدام وضهرك مفرود لحد ما تحس بشد خفيف ورا الفخذ.',
+        timerSec: 30,
+        timerLabel: 'إطالة خلفية الفخذ'
+      },
+      {
+        id: 's4',
+        title: 'إطالة العضلة الأمامية للفخذ',
+        durationText: '30 ثانية لكل رجل',
+        desc: 'اقف واسند بإيدك على حيطة أو جهاز للتوازن، اتني رجلك لورا وامسك مشطها بإيدك واسحبها بلطف ناحية جسمك.',
+        timerSec: 30,
+        timerLabel: 'إطالة أمامية الفخذ'
+      }
+    ];
+
+    // عناصر يوم الجمعة (الراحة والاستشفاء)
+    const FRIDAY_ITEMS = [
+      { id: 'f1', title: 'شرب 3 إلى 4 لتر مياه طول اليوم', desc: 'تعويض السوائل والأملاح مهم جداً للمفاصل والعضلات مع الشغل.' },
+      { id: 'f2', title: 'نوم عميق من 7 إلى 8 ساعات', desc: 'النوم هو المصنع الحقيقي اللي بيبني العضلات ويجدد طاقتك.' },
+      { id: 'f3', title: 'وجبات غنية بالبروتين الطبيعي', desc: 'بيض، جبنة قريش، فول، فراخ، سمك، أو لحمة — عشان عضلاتك تستفيد من تعب الأسبوع.' },
+      { id: 'f4', title: 'إطالة خفيفة لأسفل الظهر (5 دقائق)', desc: 'وضعية الطفل أو مشي خفيف يفك أي تيبس من شغل الأسبوع.' },
+      { id: 'f5', title: 'راحة تامة من أوزان الجيم', desc: 'ممنوع جيم النهاردة — سيب جسمك يشحن بطاريته عشان تبدأ السبت بقوة.' }
+    ];
+
+    /* =========================================================================
+       أيقونات SVG مخصصة (بدون أي صور خارجية قد تنكسر)
+       ========================================================================= */
+    function getIconSvg(type) {
+      const icons = {
+        walk: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="m7 21 3-6 2.5 2.5L15 21"/><path d="M9 11l2.5-3 3.5 2 3 1"/><path d="m10 15-3-1-2 3"/></svg>`,
+        shoulder: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>`,
+        hip: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M8 12h8"/><path d="m12 8 4 4-4 4"/></svg>`,
+        knee: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v7l5 3v6"/><path d="M17 4v7l-5 3"/></svg>`,
+        wrist: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2"/><path d="M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v6"/><path d="M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>`,
+        chest: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="4" height="8" rx="1"/><rect x="17" y="8" width="4" height="8" rx="1"/><path d="M7 12h10"/><path d="M10 9l-2 3 2 3"/><path d="M14 9l2 3-2 3"/></svg>`,
+        shoulderPress: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/><path d="M4 19h16"/></svg>`,
+        triceps: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/><path d="M6 5h12"/></svg>`,
+        pulldown: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16"/><path d="M12 5v13"/><path d="m8 14 4 4 4-4"/></svg>`,
+        row: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5-7 7 7 7"/><path d="M19 6v12"/></svg>`,
+        biceps: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11M6.5 17.5h11M4 10v4M20 10v4M7 7v10M17 7v10"/></svg>`,
+        legPress: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19l14-14"/><path d="M12 5h6v6"/><path d="M5 12v7h7"/></svg>`,
+        legCurl: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h11a4 4 0 0 1 4 4v3"/><path d="m15 16 4 3 3-4"/><circle cx="6" cy="8" r="2"/></svg>`,
+        plank: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="9" r="2"/><path d="M4 15h12l2-3"/><path d="M16 15v3"/><path d="M4 15v3"/><path d="M2 18h20"/></svg>`,
+        stretch: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><path d="M4 17c2-4 5-6 8-6s6 2 8 6"/><path d="M12 11v8"/></svg>`
+      };
+      return icons[type] || icons.biceps;
+    }
+
+    /* =========================================================================
+       إدارة الحالة والتخزين المحلي (localStorage)
+       ========================================================================= */
+    const STORAGE_KEY = 'personal_gym_guide_v1';
+
+    // تحديد يوم الأسبوع الحالي تلقائياً (السبت = 0 في قائمتنا)
+    function getTodayId() {
+      const jsDay = new Date().getDay(); // 0=الأحد .. 6=السبت
+      const map = { 6: 'sat', 0: 'sun', 1: 'mon', 2: 'tue', 3: 'wed', 4: 'thu', 5: 'fri' };
+      return map[jsDay] || 'sat';
+    }
+
+    let state = {
+      selectedDay: getTodayId(),
+      selectedStage: 'warmup', // warmup | workout | stretches
+      progress: {} // { sat: { w1: true, push_1_set_0: true, ... }, ... }
+    };
+
+    function loadProgress() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') {
+            state.progress = parsed;
+          }
+        }
+      } catch (err) {
+        console.warn('تعذر قراءة التقدم المحفوظ:', err);
+      }
+    }
+
+    function saveProgress() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state.progress));
+      } catch (err) {
+        console.warn('تعذر حفظ التقدم:', err);
+      }
+    }
+
+    function getDayProgress(dayId) {
+      if (!state.progress[dayId]) {
+        state.progress[dayId] = {};
+      }
+      return state.progress[dayId];
+    }
+
+    function toggleTask(dayId, taskKey) {
+      const dp = getDayProgress(dayId);
+      dp[taskKey] = !dp[taskKey];
+      saveProgress();
+      renderAll();
+    }
+
+    // حساب نسبة الإنجاز لأي يوم
+    function calculateDayStats(dayObj) {
+      const dp = getDayProgress(dayObj.id);
+      if (dayObj.type === 'rest') {
+        const total = FRIDAY_ITEMS.length;
+        const done = FRIDAY_ITEMS.filter(item => dp[item.id]).length;
+        return { total, done, percent: total ? Math.round((done / total) * 100) : 0, warmupDone: false, workoutDone: false, stretchesDone: false };
+      }
+
+      const warmupTotal = WARMUP_ITEMS.length;
+      const warmupDoneCount = WARMUP_ITEMS.filter(w => dp[w.id]).length;
+
+      const exercises = WORKOUTS[dayObj.type] || [];
+      let setsTotal = 0;
+      let setsDoneCount = 0;
+      exercises.forEach(ex => {
+        for (let i = 0; i < ex.sets; i++) {
+          setsTotal++;
+          if (dp[`${ex.id}_set_${i}`]) setsDoneCount++;
+        }
+      });
+
+      const stretchTotal = STRETCH_ITEMS.length;
+      const stretchDoneCount = STRETCH_ITEMS.filter(s => dp[s.id]).length;
+
+      const total = warmupTotal + setsTotal + stretchTotal;
+      const done = warmupDoneCount + setsDoneCount + stretchDoneCount;
+
+      return {
+        total,
+        done,
+        percent: total ? Math.round((done / total) * 100) : 0,
+        warmupDone: warmupDoneCount === warmupTotal,
+        workoutDone: setsDoneCount === setsTotal,
+        stretchesDone: stretchDoneCount === stretchTotal
+      };
+    }
+
+    /* =========================================================================
+       المؤقت العائم (الراحة والإطالات) مع صوت تنبيه لطيف عبر Web Audio API
+       ========================================================================= */
+    let timerState = {
+      intervalId: null,
+      totalSeconds: 0,
+      remainingSeconds: 0,
+      isPaused: false,
+      label: ''
+    };
+
+    function playCompletionBeep() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+
+        // نغمتين لطافتين للتنبيه بانتهاء الراحة
+        [0, 0.22].forEach((delay, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(idx === 0 ? 660 : 880, ctx.currentTime + delay);
+          gain.gain.setValueAtTime(0.18, ctx.currentTime + delay);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.18);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + delay);
+          osc.stop(ctx.currentTime + delay + 0.19);
+        });
+      } catch (err) {
+        // تجاهل الخطأ لو المتصفح منع الصوت
+      }
+    }
+
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function updateTimerUI() {
+      const el = document.getElementById('floatingTimer');
+      const card = document.getElementById('timerCard');
+      const labelEl = document.getElementById('timerLabel');
+      const displayEl = document.getElementById('timerDisplay');
+      const statusEl = document.getElementById('timerStatusText');
+      const pauseBtn = document.getElementById('timerPauseBtn');
+      const barEl = document.getElementById('timerProgressBar');
+
+      el.classList.remove('hidden');
+      labelEl.textContent = timerState.label;
+      displayEl.textContent = formatTime(timerState.remainingSeconds);
+
+      const pct = timerState.totalSeconds > 0
+        ? Math.max(0, Math.min(100, (timerState.remainingSeconds / timerState.totalSeconds) * 100))
+        : 0;
+      barEl.style.width = `${pct}%`;
+
+      if (timerState.remainingSeconds <= 0) {
+        statusEl.textContent = 'الوقت خلص — يلا عالمجموعة اللي بعدها!';
+        statusEl.className = 'text-xs font-extrabold text-amber-300';
+        pauseBtn.textContent = 'إعادة';
+        card.classList.remove('border-emerald-500/60');
+        card.classList.add('border-amber-400');
+      } else if (timerState.isPaused) {
+        statusEl.textContent = 'متوقف مؤقتاً';
+        statusEl.className = 'text-xs font-semibold text-slate-400';
+        pauseBtn.textContent = 'استكمال';
+        card.classList.add('border-emerald-500/60');
+        card.classList.remove('border-amber-400');
+      } else {
+        statusEl.textContent = 'جاري العد...';
+        statusEl.className = 'text-xs font-semibold text-emerald-400';
+        pauseBtn.textContent = 'إيقاف مؤقت';
+        card.classList.add('border-emerald-500/60');
+        card.classList.remove('border-amber-400');
+      }
+    }
+
+    function startTimer(seconds, label) {
+      if (timerState.intervalId) clearInterval(timerState.intervalId);
+      timerState.totalSeconds = seconds;
+      timerState.remainingSeconds = seconds;
+      timerState.isPaused = false;
+      timerState.label = label;
+      updateTimerUI();
+
+      timerState.intervalId = setInterval(() => {
+        if (timerState.isPaused) return;
+        if (timerState.remainingSeconds > 0) {
+          timerState.remainingSeconds--;
+          updateTimerUI();
+          if (timerState.remainingSeconds === 0) {
+            clearInterval(timerState.intervalId);
+            timerState.intervalId = null;
+            playCompletionBeep();
+            if (navigator.vibrate) {
+              try { navigator.vibrate([200, 100, 200]); } catch (e) {}
+            }
+          }
+        }
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (timerState.intervalId) {
+        clearInterval(timerState.intervalId);
+        timerState.intervalId = null;
+      }
+      document.getElementById('floatingTimer').classList.add('hidden');
+    }
+
+    /* =========================================================================
+       عرض الواجهة (Rendering)
+       ========================================================================= */
+
+    function renderDaySelector() {
+      const container = document.getElementById('daySelector');
+      container.innerHTML = DAYS.map(day => {
+        const isActive = day.id === state.selectedDay;
+        const stats = calculateDayStats(day);
+        const isDone = stats.percent === 100;
+
+        return `
+          <button
+            type="button"
+            onclick="selectDay('${day.id}')"
+            role="tab"
+            aria-selected="${isActive}"
+            class="flex flex-col items-center justify-center min-w-[76px] px-3 py-2 rounded-2xl border transition shrink-0 active:scale-95 ${
+              isActive
+                ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-lg shadow-emerald-500/20'
+                : 'bg-slate-900 text-slate-300 border-slate-800 hover:border-slate-700'
+            }"
+          >
+            <div class="flex items-center gap-1">
+              <span class="text-xs sm:text-sm font-extrabold">${day.name}</span>
+              ${isDone ? `<span class="w-2 h-2 rounded-full ${isActive ? 'bg-slate-950' : 'bg-emerald-400'}"></span>` : ''}
+            </div>
+            <span class="text-[11px] font-bold mt-0.5 ${isActive ? 'text-slate-900' : (day.type === 'rest' ? 'text-amber-400' : 'text-slate-400')}">
+              ${day.shortType}
+            </span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function renderSummaryAndTabs(dayObj) {
+      const stats = calculateDayStats(dayObj);
+
+      document.getElementById('dayBadge').textContent = dayObj.name;
+      document.getElementById('dayDuration').textContent = dayObj.duration;
+      document.getElementById('dayTitle').textContent = dayObj.title;
+      document.getElementById('daySubtitle').textContent = dayObj.subtitle;
+
+      document.getElementById('progressText').textContent = `${stats.percent}% (${stats.done}/${stats.total})`;
+      document.getElementById('progressBar').style.width = `${stats.percent}%`;
+
+      const compMsg = document.getElementById('completionMessage');
+      if (stats.percent === 100) {
+        compMsg.classList.remove('hidden');
+      } else {
+        compMsg.classList.add('hidden');
+      }
+
+      const tabsWrapper = document.getElementById('stageTabsWrapper');
+      if (dayObj.type === 'rest') {
+        tabsWrapper.classList.add('hidden');
+      } else {
+        tabsWrapper.classList.remove('hidden');
+        document.getElementById('tabCheckWarmup').classList.toggle('hidden', !stats.warmupDone);
+        document.getElementById('tabCheckWorkout').classList.toggle('hidden', !stats.workoutDone);
+        document.getElementById('tabCheckStretches').classList.toggle('hidden', !stats.stretchesDone);
+
+        document.querySelectorAll('.stage-tab').forEach(btn => {
+          const isSelected = btn.dataset.stage === state.selectedStage;
+          if (isSelected) {
+            btn.className = 'stage-tab flex flex-col items-center justify-center py-2.5 px-2 rounded-xl text-xs sm:text-sm font-extrabold transition bg-emerald-500 text-slate-950 shadow-md';
+          } else {
+            btn.className = 'stage-tab flex flex-col items-center justify-center py-2.5 px-2 rounded-xl text-xs sm:text-sm font-bold transition text-slate-300 hover:bg-slate-800';
+          }
+        });
+      }
+    }
+
+    function renderWarmup(dayObj) {
+      const dp = getDayProgress(dayObj.id);
+      const cardsHtml = WARMUP_ITEMS.map(item => {
+        const checked = !!dp[item.id];
+        return `
+          <div class="bg-slate-900 border ${checked ? 'border-emerald-500/50 bg-emerald-950/20' : 'border-slate-800'} rounded-3xl p-4 transition">
+            <div class="flex items-start gap-3.5">
+              <!-- زر التحديد -->
+              <button
+                type="button"
+                onclick="toggleTask('${dayObj.id}', '${item.id}')"
+                aria-label="تحديد ${item.title}"
+                class="w-7 h-7 mt-0.5 rounded-xl border-2 flex items-center justify-center shrink-0 transition active:scale-90 ${
+                  checked
+                    ? 'bg-emerald-500 border-emerald-500 text-slate-950'
+                    : 'border-slate-600 bg-slate-800/70 text-transparent hover:border-emerald-400'
+                }"
+              >
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </button>
+
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2 flex-wrap">
+                  <h3 class="text-base font-extrabold ${checked ? 'text-emerald-300 line-through opacity-80' : 'text-white'}">
+                    ${item.title}
+                  </h3>
+                  <span class="px-2.5 py-0.5 rounded-lg bg-slate-800 text-emerald-400 text-xs font-bold border border-slate-700">
+                    ${item.reps}
+                  </span>
+                </div>
+                <p class="text-sm text-slate-400 mt-1.5 leading-relaxed">${item.desc}</p>
+
+                ${item.timerSec ? `
+                  <div class="mt-3">
+                    <button
+                      type="button"
+                      onclick="startTimer(${item.timerSec}, 'تسخين — ${item.title}')"
+                      class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 text-xs font-bold transition active:scale-95"
+                    >
+                      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 2h6"/>
+                      </svg>
+                      <span>ابدأ مؤقت 5 دقائق</span>
+                    </button>
+                  </div>
+                ` : ''}
+              </div>
+
+              <div class="hidden sm:flex w-11 h-11 rounded-2xl bg-slate-800/80 text-emerald-400 items-center justify-center shrink-0">
+                ${getIconSvg(item.icon)}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <div class="bg-emerald-500/10 border border-emerald-500/25 rounded-2xl p-3.5 text-sm text-emerald-200 leading-relaxed">
+          <strong class="text-emerald-400">ليه التسخين مهم؟</strong> بيجهز المفاصل والكتف وأسفل الظهر قبل الأوزان وبيمنع الإصابات تماماً.
+        </div>
+        <div class="space-y-3">${cardsHtml}</div>
+        <button
+          type="button"
+          onclick="selectStage('workout')"
+          class="w-full py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-base shadow-lg shadow-emerald-500/20 transition active:scale-[0.99]"
+        >
+          خلصت التسخين — انتقل للتمارين بالأجهزة ←
+        </button>
+      `;
+    }
+
+    function renderWorkout(dayObj) {
+      const dp = getDayProgress(dayObj.id);
+      const exercises = WORKOUTS[dayObj.type] || [];
+
+      const cardsHtml = exercises.map((ex, idx) => {
+        // دوائر المجموعات
+        let completedSets = 0;
+        const setsHtml = Array.from({ length: ex.sets }).map((_, setIdx) => {
+          const key = `${ex.id}_set_${setIdx}`;
+          const isDone = !!dp[key];
+          if (isDone) completedSets++;
+          return `
+            <button
+              type="button"
+              onclick="toggleTask('${dayObj.id}', '${key}')"
+              class="flex flex-col items-center justify-center py-2.5 px-2 rounded-2xl border-2 transition active:scale-95 ${
+                isDone
+                  ? 'bg-emerald-500 border-emerald-400 text-slate-950 font-extrabold shadow-md shadow-emerald-500/20'
+                  : 'bg-slate-800/80 border-slate-700 text-slate-300 hover:border-emerald-500/60 font-bold'
+              }"
+            >
+              <span class="text-xs">مجموعة ${setIdx + 1}</span>
+              <span class="mt-1">
+                ${isDone
+                  ? `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
+                  : `<span class="block w-3.5 h-3.5 rounded-full border-2 border-slate-500"></span>`
+                }
+              </span>
+            </button>
+          `;
+        }).join('');
+
+        const allSetsDone = completedSets === ex.sets;
+        const ytUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ex.youtubeQuery)}`;
+
+        return `
+          <article class="bg-slate-900 border ${allSetsDone ? 'border-emerald-500/60' : 'border-slate-800'} rounded-3xl p-4 sm:p-5 space-y-4 shadow-lg">
+            <!-- رأس بطاقة التمرين -->
+            <div class="flex items-start gap-3.5">
+              <div class="w-13 h-13 p-3 rounded-2xl ${allSetsDone ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-emerald-400'} flex items-center justify-center shrink-0">
+                ${getIconSvg(ex.icon)}
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-xs font-bold text-slate-400">تمرين ${idx + 1} من ${exercises.length}</span>
+                  ${allSetsDone ? `<span class="text-xs font-extrabold text-emerald-400 bg-emerald-500/15 px-2.5 py-0.5 rounded-full">مكتمل ✓</span>` : ''}
+                </div>
+                <h3 class="text-lg sm:text-xl font-extrabold text-white mt-0.5">${ex.name}</h3>
+                <p class="text-xs text-slate-400 font-semibold">${ex.enName}</p>
+              </div>
+            </div>
+
+            <!-- شارات المجموعات والعدات والراحة -->
+            <div class="grid grid-cols-3 gap-2 text-center">
+              <div class="bg-slate-800/80 rounded-2xl p-2.5 border border-slate-700/70">
+                <span class="block text-[11px] text-slate-400 font-semibold">المجموعات</span>
+                <span class="text-sm font-extrabold text-white">${ex.sets} مجموعات</span>
+              </div>
+              <div class="bg-slate-800/80 rounded-2xl p-2.5 border border-slate-700/70">
+                <span class="block text-[11px] text-slate-400 font-semibold">العدات / المدة</span>
+                <span class="text-sm font-extrabold text-emerald-400">${ex.reps}</span>
+              </div>
+              <div class="bg-slate-800/80 rounded-2xl p-2.5 border border-slate-700/70">
+                <span class="block text-[11px] text-slate-400 font-semibold">الراحة</span>
+                <span class="text-sm font-extrabold text-amber-300">${ex.restSec} ثانية</span>
+              </div>
+            </div>
+
+            <!-- شرح الأداء -->
+            <div class="bg-slate-950/60 border border-slate-800 rounded-2xl p-3.5 space-y-2">
+              <p class="text-xs font-extrabold text-emerald-400">طريقة الأداء الصح:</p>
+              <p class="text-sm text-slate-200 leading-relaxed">${ex.form}</p>
+            </div>
+
+            <!-- نصيحة أمان -->
+            <div class="flex items-start gap-2.5 bg-amber-500/10 border border-amber-500/25 rounded-2xl p-3">
+              <svg class="w-5 h-5 text-amber-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              <p class="text-xs sm:text-sm text-amber-100 leading-relaxed">
+                <strong class="text-amber-300">نصيحة أمان:</strong> ${ex.tip}
+              </p>
+            </div>
+
+            <!-- تعليم المجموعات -->
+            <div>
+              <p class="text-xs font-bold text-slate-400 mb-2">علّم على كل مجموعة تخلصها:</p>
+              <div class="grid ${ex.sets === 4 ? 'grid-cols-4' : 'grid-cols-3'} gap-2">
+                ${setsHtml}
+              </div>
+            </div>
+
+            <!-- أزرار مؤقت الراحة ويوتيوب -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+              <button
+                type="button"
+                onclick="startTimer(${ex.restSec}, 'راحة — ${ex.name}')"
+                class="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-sm transition active:scale-[0.98]"
+              >
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 2h6"/>
+                </svg>
+                <span>ابدأ مؤقت الراحة (${ex.restSec} ث)</span>
+              </button>
+
+              <a
+                href="${ytUrl}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 font-bold text-sm transition active:scale-[0.98]"
+              >
+                <svg class="w-5 h-5 text-rose-500" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+                <span>شوف فيديو الأداء على يوتيوب</span>
+              </a>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      return `
+        <div class="space-y-4">${cardsHtml}</div>
+        <button
+          type="button"
+          onclick="selectStage('stretches')"
+          class="w-full py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-base shadow-lg shadow-emerald-500/20 transition active:scale-[0.99]"
+        >
+          خلصت الأجهزة — انتقل للتهدئة والإطالات ←
+        </button>
+      `;
+    }
+
+    function renderStretches(dayObj) {
+      const dp = getDayProgress(dayObj.id);
+      const cardsHtml = STRETCH_ITEMS.map(item => {
+        const checked = !!dp[item.id];
+        return `
+          <div class="bg-slate-900 border ${checked ? 'border-emerald-500/50 bg-emerald-950/20' : 'border-slate-800'} rounded-3xl p-4 transition">
+            <div class="flex items-start gap-3.5">
+              <button
+                type="button"
+                onclick="toggleTask('${dayObj.id}', '${item.id}')"
+                aria-label="تحديد ${item.title}"
+                class="w-7 h-7 mt-0.5 rounded-xl border-2 flex items-center justify-center shrink-0 transition active:scale-90 ${
+                  checked
+                    ? 'bg-emerald-500 border-emerald-500 text-slate-950'
+                    : 'border-slate-600 bg-slate-800/70 text-transparent hover:border-emerald-400'
+                }"
+              >
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </button>
+
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2 flex-wrap">
+                  <h3 class="text-base font-extrabold ${checked ? 'text-emerald-300 line-through opacity-80' : 'text-white'}">
+                    ${item.title}
+                  </h3>
+                  <span class="px-2.5 py-0.5 rounded-lg bg-slate-800 text-teal-300 text-xs font-bold border border-slate-700">
+                    ${item.durationText}
+                  </span>
+                </div>
+                <p class="text-sm text-slate-400 mt-1.5 leading-relaxed">${item.desc}</p>
+
+                <div class="mt-3">
+                  <button
+                    type="button"
+                    onclick="startTimer(${item.timerSec}, '${item.timerLabel}')"
+                    class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 text-xs font-bold transition active:scale-95"
+                  >
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 2h6"/>
+                    </svg>
+                    <span>ابدأ مؤقت ${item.timerSec === 300 ? '5 دقائق' : item.timerSec + ' ثانية'}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <div class="bg-teal-500/10 border border-teal-500/25 rounded-2xl p-3.5 text-sm text-teal-100 leading-relaxed">
+          <strong class="text-teal-300">سر الراحة تاني يوم:</strong> الـ 10 دقائق دول بيفكّوا شد العضلات وأسفل الظهر وبيخلوك تصحى لشغل الغيط الصبح فايق ونشيط.
+        </div>
+        <div class="space-y-3">${cardsHtml}</div>
+      `;
+    }
+
+    function renderFridayRecovery(dayObj) {
+      const dp = getDayProgress(dayObj.id);
+      const itemsHtml = FRIDAY_ITEMS.map(item => {
+        const checked = !!dp[item.id];
+        return `
+          <div class="bg-slate-900 border ${checked ? 'border-emerald-500/50 bg-emerald-950/20' : 'border-slate-800'} rounded-3xl p-4 transition">
+            <div class="flex items-start gap-3.5">
+              <button
+                type="button"
+                onclick="toggleTask('${dayObj.id}', '${item.id}')"
+                aria-label="تحديد ${item.title}"
+                class="w-7 h-7 mt-0.5 rounded-xl border-2 flex items-center justify-center shrink-0 transition active:scale-90 ${
+                  checked
+                    ? 'bg-emerald-500 border-emerald-500 text-slate-950'
+                    : 'border-slate-600 bg-slate-800/70 text-transparent hover:border-emerald-400'
+                }"
+              >
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </button>
+              <div>
+                <h3 class="text-base font-extrabold ${checked ? 'text-emerald-300 line-through opacity-80' : 'text-white'}">${item.title}</h3>
+                <p class="text-sm text-slate-400 mt-1 leading-relaxed">${item.desc}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <div class="bg-gradient-to-br from-emerald-500/15 to-teal-500/10 border border-emerald-500/30 rounded-3xl p-5 text-center space-y-2">
+          <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+            <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+            </svg>
+          </div>
+          <h3 class="text-xl font-extrabold text-white">جمعة مباركة — يوم شحن الطاقة</h3>
+          <p class="text-sm text-slate-300 leading-relaxed max-w-md mx-auto">
+            العضلة مبتكبرش جوه الجيم، العضلة بتكبر وتقوى وقت الراحة والنوم. التزم بالخطوات البسيطة دي النهاردة عشان تبدأ الأسبوع الجديد بقوة.
+          </p>
+        </div>
+        <div class="space-y-3">${itemsHtml}</div>
+      `;
+    }
+
+    function renderAll() {
+      const dayObj = DAYS.find(d => d.id === state.selectedDay) || DAYS[0];
+      renderDaySelector();
+      renderSummaryAndTabs(dayObj);
+
+      const contentArea = document.getElementById('contentArea');
+      if (dayObj.type === 'rest') {
+        contentArea.innerHTML = renderFridayRecovery(dayObj);
+      } else if (state.selectedStage === 'warmup') {
+        contentArea.innerHTML = renderWarmup(dayObj);
+      } else if (state.selectedStage === 'workout') {
+        contentArea.innerHTML = renderWorkout(dayObj);
+      } else {
+        contentArea.innerHTML = renderStretches(dayObj);
+      }
+    }
+
+    /* =========================================================================
+       التفاعلات والأحداث
+       ========================================================================= */
+    function selectDay(dayId) {
+      state.selectedDay = dayId;
+      state.selectedStage = 'warmup';
+      renderAll();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function selectStage(stage) {
+      state.selectedStage = stage;
+      renderAll();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ربط أزرار المراحل
+    document.querySelectorAll('.stage-tab').forEach(btn => {
+      btn.addEventListener('click', () => selectStage(btn.dataset.stage));
+    });
+
+    // أزرار المؤقت العائم
+    document.getElementById('timerPauseBtn').addEventListener('click', () => {
+      if (timerState.remainingSeconds <= 0) {
+        startTimer(timerState.totalSeconds, timerState.label);
+      } else {
+        timerState.isPaused = !timerState.isPaused;
+        updateTimerUI();
+      }
+    });
+
+    document.getElementById('timerAddBtn').addEventListener('click', () => {
+      timerState.remainingSeconds += 15;
+      timerState.totalSeconds = Math.max(timerState.totalSeconds, timerState.remainingSeconds);
+      if (!timerState.intervalId && !timerState.isPaused) {
+        startTimer(timerState.remainingSeconds, timerState.label);
+      } else {
+        updateTimerUI();
+      }
+    });
+
+    document.getElementById('timerCloseBtn').addEventListener('click', stopTimer);
+
+    // نافذة القواعد الذهبية
+    const rulesModal = document.getElementById('rulesModal');
+    function openRules() {
+      rulesModal.classList.remove('hidden');
+      rulesModal.classList.add('flex');
+    }
+    function closeRules() {
+      rulesModal.classList.add('hidden');
+      rulesModal.classList.remove('flex');
+    }
+    document.getElementById('openRulesBtn').addEventListener('click', openRules);
+    document.getElementById('closeRulesBtn').addEventListener('click', closeRules);
+    document.getElementById('confirmRulesBtn').addEventListener('click', closeRules);
+    rulesModal.addEventListener('click', (e) => {
+      if (e.target === rulesModal) closeRules();
+    });
+
+    // نافذة تأكيد تصفير اليوم
+    const resetModal = document.getElementById('resetConfirmModal');
+    function openResetModal() {
+      resetModal.classList.remove('hidden');
+      resetModal.classList.add('flex');
+    }
+    function closeResetModal() {
+      resetModal.classList.add('hidden');
+      resetModal.classList.remove('flex');
+    }
+    document.getElementById('resetDayBtn').addEventListener('click', openResetModal);
+    document.getElementById('cancelResetBtn').addEventListener('click', closeResetModal);
+    document.getElementById('confirmResetBtn').addEventListener('click', () => {
+      state.progress[state.selectedDay] = {};
+      saveProgress();
+      closeResetModal();
+      renderAll();
+    });
+    resetModal.addEventListener('click', (e) => {
+      if (e.target === resetModal) closeResetModal();
+    });
+
+    // تشغيل التطبيق عند التحميل
+    loadProgress();
+    renderAll();
+  </script>
+</body>
+</html>
